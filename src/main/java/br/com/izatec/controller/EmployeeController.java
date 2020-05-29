@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -77,5 +78,21 @@ public class EmployeeController {
         }
     }
 
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+	@RequestMapping(value = "{id}", method = RequestMethod.GET)
+    @ResponseBody
+    public ResponseEntity getById(@PathVariable Long id) throws Exception {
+
+    	Employee protocol = this.service.findById(id);
+
+        if (protocol != null && protocol.getId() != null) {
+        	EmployeePresenter protocolPresenter = new EmployeePresenter(protocol);
+            return new ResponseEntity(protocolPresenter, HttpStatus.OK);
+        } else if (protocol == null) {
+            return new ResponseEntity(HttpStatus.NO_CONTENT);
+        } else {
+            return new ResponseEntity(HttpStatus.NOT_FOUND);
+        }
+    }
  
 }

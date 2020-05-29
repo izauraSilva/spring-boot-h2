@@ -25,35 +25,49 @@ import br.com.izatec.services.EmployeeService;
  */
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
-	
+
 	@Autowired
 	EmployeeRepository repository;
-	 
+
 	@Override
 	public Employee create(Employee entity) {				
 		Employee employee = this.repository.save(new EmployeeEntity(entity)).toModel();		
 		return employee;
 	}   
-     
+
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public Page<Employee> getAllPaged(Employee employee) {
 
 		Pageable paging = null;
-        
+
 		if (!StringUtils.isEmpty(employee.getOrder()) && StringUtils.equalsIgnoreCase("desc", employee.getOrder().trim())) {
-            paging = PageRequest.of(employee.getPage(), employee.getSize(), Sort.by(employee.getSortBy()).descending());
-        } else {
-            paging = PageRequest.of(employee.getPage(), employee.getSize(), Sort.by(employee.getSortBy()).ascending());
-        }
-        
-        List<Employee> employees = this.repository.findAll(paging).stream().map(a -> a.toModel()).collect(toList());
+			paging = PageRequest.of(employee.getPage(), employee.getSize(), Sort.by(employee.getSortBy()).descending());
+		} else {
+			paging = PageRequest.of(employee.getPage(), employee.getSize(), Sort.by(employee.getSortBy()).ascending());
+		}
 
-        PagedListHolder pagedListHolder = new PagedListHolder(employees);
+		List<Employee> employees = this.repository.findAll(paging).stream().map(a -> a.toModel()).collect(toList());
 
-        Page<Employee> page = new PageImpl<>(pagedListHolder.getPageList());
+		PagedListHolder pagedListHolder = new PagedListHolder(employees);
 
-        return page;
+		Page<Employee> page = new PageImpl<>(pagedListHolder.getPageList());
+
+		return page;
 	}
-  
+
+	@Override
+	public Employee findById(Long id) {
+		
+		EmployeeEntity employeeEntity = this.repository.getOne(id);
+		
+		if (employeeEntity != null) {
+			return employeeEntity.toModel();
+		} else {
+			return null;
+		}
+	}
+
+
+
 }

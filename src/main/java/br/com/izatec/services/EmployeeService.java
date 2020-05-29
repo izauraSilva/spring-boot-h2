@@ -13,5 +13,7 @@ public interface EmployeeService {
 	public Employee create(Employee employee);
 	
 	public Page<Employee> getAllPaged(Employee employee);
+	
+	public Employee findById(Long id);
 
 }
