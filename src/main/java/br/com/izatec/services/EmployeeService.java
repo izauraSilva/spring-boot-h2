@@ -15,5 +15,7 @@ public interface EmployeeService {
 	public Page<Employee> getAllPaged(Employee employee);
 	
 	public Employee findById(Long id);
+	
+	public Employee findByFirstName(String firstName);
 
 }

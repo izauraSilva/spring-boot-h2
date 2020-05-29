@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -54,7 +55,7 @@ public class EmployeeController {
     @SuppressWarnings({ "rawtypes", "unchecked" })
 	@RequestMapping(value = "/", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity<Page<Employee>> getByCustomerDocumentPaged(
+    public ResponseEntity<Page<Employee>> getAllPaged(
     		@RequestParam(value = "page", required = false, defaultValue = "0") int page,
             @RequestParam(value = "size", required = false, defaultValue = "10") int size,
             @RequestParam(value = "sortBy", required = false, defaultValue = "id") String sortBy,
@@ -69,7 +70,7 @@ public class EmployeeController {
         Page<Employee> employeePageationPage = this.service.getAllPaged(parameter.toModel());
 
         if (employeePageationPage != null && employeePageationPage.getTotalElements() > 0) {
-            Page<EmployeePresenter> ManifestationPresenter = employeePageationPage.map(a -> new EmployeePresenter(a));
+            Page<EmployeePresenter> ManifestationPresenter = employeePageationPage.map(employee -> new EmployeePresenter(employee));
             return new ResponseEntity(ManifestationPresenter, HttpStatus.OK);
         } else if (employeePageationPage == null) {
             return new ResponseEntity(HttpStatus.NOT_FOUND);
@@ -83,12 +84,28 @@ public class EmployeeController {
     @ResponseBody
     public ResponseEntity getById(@PathVariable Long id) throws Exception {
 
-    	Employee protocol = this.service.findById(id);
+    	Employee employee = this.service.findById(id);
 
-        if (protocol != null && protocol.getId() != null) {
-        	EmployeePresenter protocolPresenter = new EmployeePresenter(protocol);
-            return new ResponseEntity(protocolPresenter, HttpStatus.OK);
-        } else if (protocol == null) {
+        if (employee != null && employee.getId() != null) {
+        	EmployeePresenter employeePresenter = new EmployeePresenter(employee);
+            return new ResponseEntity(employeePresenter, HttpStatus.OK);
+        } else if (employee == null) {
+            return new ResponseEntity(HttpStatus.NO_CONTENT);
+        } else {
+            return new ResponseEntity(HttpStatus.NOT_FOUND);
+        }
+    }
+    
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @GetMapping(path = {"firstName/{firstName}"})
+    public ResponseEntity getByFirstName(@PathVariable String firstName){
+    	
+    	Employee employee = this.service.findByFirstName(firstName);
+
+        if (employee != null && employee.getId() != null) {
+        	EmployeePresenter employeePresenter = new EmployeePresenter(employee);
+            return new ResponseEntity(employeePresenter, HttpStatus.OK);         
+        } else if (employee == null) {
             return new ResponseEntity(HttpStatus.NO_CONTENT);
         } else {
             return new ResponseEntity(HttpStatus.NOT_FOUND);

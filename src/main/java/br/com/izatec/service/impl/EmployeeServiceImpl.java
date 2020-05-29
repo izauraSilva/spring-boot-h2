@@ -68,6 +68,18 @@ public class EmployeeServiceImpl implements EmployeeService {
 		}
 	}
 
+	@Override
+	public Employee findByFirstName(String firstName) {
+		
+		EmployeeEntity employeeEntity = this.repository.findByFirstName(firstName);
+		
+		if (employeeEntity != null) {
+			return employeeEntity.toModel();
+		} else {
+			return null;
+		}
+	}
+
 
 
 }

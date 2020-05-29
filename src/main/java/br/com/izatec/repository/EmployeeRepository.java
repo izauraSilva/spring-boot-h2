@@ -11,5 +11,7 @@ import br.com.izatec.entities.EmployeeEntity;
  */
 @Repository
 public interface EmployeeRepository extends JpaRepository<EmployeeEntity, Long> {
+
+	EmployeeEntity findByFirstName(String firstName);
  
 }
